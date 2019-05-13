@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" placeholder="输入你的内容">
+    <button>发送请求</button>
+    <div></div>
+    <script>
+        var oInput = document.getElementsByTagName('input')[0];
+        var oDiv = document.getElementsByTagName('div')[0];
+        var oBtn = document.getElementsByTagName('button')[0];
+
+        var socket = new WebSocket('ws://localhost:3000');
+
+        socket.addEventListener('open',function(){
+            oDiv.innerHTML = '连接成功'
+        });
+
+        oBtn.addEventListener('click',function(){
+            var value = oInput.value;
+            // console.log(value);
+            // 发送数据
+            socket.send(value);
+            oInput.value = '';   
+        });
+
+        socket.addEventListener('message',function(e){
+            // console.log(e,e.data);
+            var data = JSON.parse(e.data);
+            var div = document.createElement('div');
+            switch(data.type){
+                case 0:
+                div.style.color = 'green';
+                break;
+                case 1:
+                div.style.color = 'black';
+                break;
+                case 2:
+                div.style.color = 'red';
+                break;
+            }
+            div.innerText = data.msg + '---' + data.time;
+            oDiv.appendChild(div);   
+        })
+
+        socket.addEventListener('close',function(e){
+            // oDiv.innerHTML = e.data;
+            console.log('服务断开');
+        })
+        // 甲方关闭
+        // socket.close();
+    </script>
+</body>
+</html>

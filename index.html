@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" placeholder="输入你的内容">
+    <button>发送请求</button>
+    <div></div>
+    <script>
+        var oInput = document.getElementsByTagName('input')[0];
+        var oDiv = document.getElementsByTagName('div')[0];
+        var oBtn = document.getElementsByTagName('button')[0];
+
+        // API事件: open/message/error/close;  方法：send();/close(); 
+        var socket = new WebSocket('ws://echo.websocket.org');
+        // 建立连接
+        socket.addEventListener('open',function(){
+            oDiv.innerHTML = '连接成功'
+        });
+        oBtn.addEventListener('click',function(){
+            var value = oInput.value;
+            console.log(value);
+            // 发送数据
+            socket.send(value);   
+        });
+
+        // 接收数据
+        socket.addEventListener('message',function(e){
+            console.log(e,e.data);
+            oDiv.innerHTML = e.data;
+        })
+        // 断开 ->监听服务器断开(乙方)
+        socket.addEventListener('close',function(e){
+            // oDiv.innerHTML = e.data;
+            console.log('服务断开');
+        })
+        // 甲方关闭
+        // socket.close();
+    </script>
+</body>
+</html>
